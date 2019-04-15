@@ -1,0 +1,59 @@
+{
+	"name": "geeklanguage",
+	"displayName": "geekLanguage",
+	"description": "国际化自动翻译",
+	"keywords": [
+		"geekLanguage"
+	],
+	"publisher": "mtshen",
+	"version": "1.0.1",
+	"engines": {
+		"vscode": "^1.33.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onLanguage:javascript",
+		"onLanguage:vue",
+		"onLanguage:jade"
+	],
+	"main": "./src/extension",
+	"contributes": {
+		"configuration": {
+			"type": "object",
+			"title": "geekLanguage",
+			"properties": {
+				"geekLanguage.languageUrl": {
+					"type": "string",
+					"default": "",
+					"description": "国际化内容请求接口, 填完整的请求中文的接口, 且无跨域要求"
+				},
+				"geekLanguage.languageJSON": {
+					"type": "string",
+					"default": "",
+					"description": "本地是否有JSON语言包, 如果有可以直接读本地的语言包"
+				},
+				"geekLanguage.regexp": {
+					"type": "string",
+					"default": "$L(${language}),t(${language})",
+					"description": "目前只有对$L() 与 t() 写法的检查, 这里提供了自定义内容检查, 多种检查用逗号隔开"
+				}
+			}
+		},
+		"commands": [
+		]
+	},
+	"scripts": {
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"test": "node ./node_modules/vscode/bin/test"
+	},
+	"devDependencies": {
+		"@types/mocha": "^2.2.42",
+		"@types/node": "^10.12.21",
+		"eslint": "^5.13.0",
+		"request": "^2.88.0",
+		"typescript": "^3.3.1",
+		"vscode": "^1.1.28"
+	}
+}
