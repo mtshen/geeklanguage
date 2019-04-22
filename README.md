@@ -4,10 +4,10 @@ GEEK+
 
 ## 安装
 打开vscode的插件, 使用VSIX安装
-![](https://github.com/mtshen/geeklanguage/geek.png)
+![](https://github.com/mtshen/geeklanguage/blob/master/geek.png)
 
-## 下载
-[geeklanguage](https://github.com/mtshen/geeklanguage/geeklanguage-1.0.2.vsix)
+## 下载插件包
+[geeklanguage](https://github.com/mtshen/geeklanguage/blob/master/geeklanguage-1.0.2.vsix)
 
 ## 设置
 ### `geekLanguage.languageUrl`
