@@ -3,7 +3,6 @@
 GEEK+
 
 ## 安装
-打开vscode的插件, 使用VSIX安装
 ![](https://github.com/mtshen/geeklanguage/blob/master/geek.png)
 
 ## 下载插件包
