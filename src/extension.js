@@ -1,7 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
-const request = require('request');
+const http = require('http');
 const fs = require('fs');
 
 // this method is called when your extension is activated
@@ -13,20 +13,23 @@ const Position = vscode.Position;
 
 const decorationType = window.createTextEditorDecorationType({after: {margin: '0 0 0 1rem'}});
 const transferred = ['(', ')', '{', '}', '[', ']', '$', '^', '|', '.', '"', "'"];
-let languageInfo = {}, decorationsDebounce, originDecorations = {}, decorations = {}, regexpList = [];
+let languageInfo, decorationsDebounce, originDecorations = {}, decorations = {}, regexpList = [];
 
 function activate() {
 	// 得到用户配置项
 	const config = vscode.workspace.getConfiguration('geekLanguage');
-	const { languageJSON, languageUrl, regexp = '$L(${language}),t(${language})' } = config;
-
+	const { languageJSON, languageUrl, regexp } = config;
+	
 	if (!languageJSON && !languageUrl) {
 		// 没有任何可用的国际化文件
+		vscode.window.showInformationMessage('国际化未配置!');
 		return false;
 	}
 
+	vscode.window.showInformationMessage('正在加载语言包!');
+
 	// 输出正则
-	regexpList = regexp.split(',').map((text) => {
+	regexpList = (regexp || '$L(${language}),t(${language})').split(',').map((text) => {
 		const [textStart, textEnd] = text.split('${language}');
 		return [...textStart].map((t) => {
 			return transferred.includes(t) ? `\\${t}` : t;
@@ -38,13 +41,15 @@ function activate() {
 	});
 
 	// 加载本地语言包
-	if (languageJSON) {
+	if (languageJSON && !languageInfo) {
 		// 异步读取
 		fs.readFile(languageJSON, function (err, data) {
 			if (err) {
 				vscode.window.showInformationMessage('加载本地语言包失败!');
 				return false;
 			}
+
+			vscode.window.showInformationMessage('本地语言包加载完成!');
 			Object.assign(languageInfo, JSON.parse(data.toString()));
 
 			// 加载语言包成果后自动进行转换
@@ -54,21 +59,24 @@ function activate() {
 	}
 
 	// 加载线上语言包
-	if (languageUrl) {
-		request.get(config.languageUrl, function (err, res, body) {
-			if (err) {
-				vscode.window.showInformationMessage('请求远程语言包失败!');
-				return false;
-			}
-			
-			Object.assign(languageInfo, JSON.parse(body).data);
+	if (languageUrl && !languageInfo) {
+		http.get(config.languageUrl, (res) => {
+			let data = '';
+			res.on('data', (chunk) => {
+				data += chunk;
+			});
+			res.on('end', () => {
+				vscode.window.showInformationMessage('线上语言包加载完成!');
+				Object.assign(languageInfo, JSON.parse(data).data);
 
-			// 加载语言包成果后自动进行转换
-			didChangeTextDocument()
-			setTimeout(() => didChangeTextDocument(), 1000);
+				// 加载语言包成果后自动进行转换
+				didChangeTextDocument()
+				setTimeout(() => didChangeTextDocument(), 1000);
+			});
 		});
 	}
-	
+
+	languageInfo = {};
 	workspace.onDidChangeTextDocument(didChangeTextDocument);
 	window.onDidChangeActiveTextEditor(didChangeTextDocument);
 }
@@ -125,9 +133,9 @@ function decorate(text, packageInfo, color = '#67C23A') {
 	decorations[fileName] || (decorations[fileName] = {});
 	decorations[fileName][line] || (decorations[fileName][line] = []);
 
-  decorations[fileName][line].push({
-    renderOptions: {after: {contentText: text, color}},
-    range: new Range(new Position(line - 1, packageInfo.lineMatchIndex), new Position(line - 1, packageInfo.lineMatchIndex))
+	decorations[fileName][line].push({
+		renderOptions: {after: {contentText: text, color}},
+		range: new Range(new Position(line - 1, packageInfo.lineMatchIndex), new Position(line - 1, packageInfo.lineMatchIndex))
 	});
 }
 
@@ -176,7 +184,7 @@ function refreshDecorations(fileName, delay = 10) {
 
 // 获取打开的文档
 function getEditors(fileName) {
-  return window.visibleTextEditors.filter(editor => editor.document.fileName === fileName);
+	return window.visibleTextEditors.filter(editor => editor.document.fileName === fileName);
 }
 
 exports.activate = activate;

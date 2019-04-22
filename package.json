@@ -6,7 +6,8 @@
 		"geekLanguage"
 	],
 	"publisher": "mtshen",
-	"version": "1.0.1",
+	"repository": "https://github.com/mtshen/geeklanguage",
+	"version": "1.0.2",
 	"engines": {
 		"vscode": "^1.33.0"
 	},
@@ -41,8 +42,7 @@
 				}
 			}
 		},
-		"commands": [
-		]
+		"commands":  []
 	},
 	"scripts": {
 		"postinstall": "node ./node_modules/vscode/bin/install",
