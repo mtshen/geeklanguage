@@ -6,7 +6,8 @@ GEEK+
 ![](https://github.com/mtshen/geeklanguage/blob/master/geek.png)
 
 ## 下载插件包
-[geeklanguage](https://github.com/mtshen/geeklanguage/blob/master/geeklanguage-1.0.2.vsix)
+[geeklanguage](https://github.com/mtshen/geeklanguage/blob/master/geeklanguage-1.0.2.vsix)    
+插件包是项目根目录的 `geeklanguage-1.0.2.vsix` 可以手动close下来
 
 ## 设置
 ### `geekLanguage.languageUrl`
